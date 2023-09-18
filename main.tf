@@ -38,3 +38,23 @@ resource "aws_subnet" "public" {
     Project     = var.project_name
   }
 }
+
+
+#private subnets creation
+ 
+resource "aws_subnet" "private" {
+ 
+  count                   = 3
+  vpc_id                  = aws_vpc.my-vpc.id
+  cidr_block              = cidrsubnet(var.main_cidr_block, 3, (count.index))
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
+  map_public_ip_on_launch = "false"
+ 
+  tags = {
+    Name        = "${var.project_name}-${var.project_environment}-private${count.index + 1}"
+    Environment = var.project_environment
+    Project     = var.project_name
+  }
+}
+
+
