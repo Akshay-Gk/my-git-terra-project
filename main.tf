@@ -57,4 +57,25 @@ resource "aws_subnet" "private" {
   }
 }
 
-
+#elstic-ip  creation
+ 
+resource "aws_eip" "nat" {
+ 
+  domain = "vpc"
+}
+ 
+#nat-gw creation
+ 
+resource "aws_nat_gateway" "my-nat" {
+ 
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public[2].id
+ 
+  tags = {
+    Name        = "${var.project_name}-${var.project_environment}"
+    Environment = var.project_environment
+    Project     = var.project_name
+  }
+ 
+  depends_on = [aws_internet_gateway.igw]
+}
