@@ -23,3 +23,18 @@ resource "aws_internet_gateway" "igw" {
     Project     = var.project_name
   }
 }
+#public subnets creation
+ 
+resource "aws_subnet" "public" {
+ 
+  count                   = 3
+  vpc_id                  = aws_vpc.my-vpc.id
+  cidr_block              = cidrsubnet(var.main_cidr_block, 3, (count.index + 3))
+  map_public_ip_on_launch = "true"
+  availability_zone       = data.aws_availability_zones.available.names[count.index]
+  tags = {
+    Name        = "${var.project_name}-${var.project_environment}-public${count.index + 4}"
+    Environment = var.project_environment
+    Project     = var.project_name
+  }
+}
